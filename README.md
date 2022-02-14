@@ -3,5 +3,5 @@
 # functionality
 - logs the data in seprate file
 - create random passsword
-- add passwored to clipboard 
+- add passwored to clipboards
 ---------------
