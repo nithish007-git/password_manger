@@ -1,4 +1,4 @@
-# file manger app created with tkiner gui app
+# file manger app created with tkiner gui 
 ------------
 # functionality
 - logs the data in seprate file
