@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter import messagebox
 import pyperclip
+import json
 window=Tk()
+#hackerfeast
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def password():
@@ -36,21 +38,60 @@ def password():
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_pass():
+    newdata={
+        entry1.get():{
+          "email": entry_email.get(),
+          "passw":entry_pass.get()
+
+
+        }
+    }
 
     if len(entry1.get())==0 or len(entry_pass.get())==0 :
         messagebox.showerror(title="OOPS",message="please dont leave the fileds empty")
     else:
-        conf = messagebox.askokcancel(title="conformation",
-                                      message=f"website:{entry1.get()}\n password:{entry_pass.get()} \n Can i add to database ?")
-        if conf:
-            with open("data.txt", "a") as f:
-                file = f.write(f"{entry1.get()}|{entry_email.get()}|{entry_pass.get()} \n")
-                clear()
+        try:
+
+            with open("data.json", "r") as file:
+                data12= json.load(file)
+
+        except(FileNotFoundError,json.JSONDecodeError):
+            with open("data.json","w") as data_file:
+                json.dump(newdata, data_file, indent=4)
+        else:
+                data12.update(newdata)
+                with open("data.json", "w") as data_file:
+                     json.dump(data12, data_file, indent=4)
+
+        finally:
+              clear()
 
 
 def clear():
     entry1.delete(0,"end")
     entry_pass.delete(0,"end")
+def find_pass():
+
+     website=entry1.get()
+     try:
+          with open("data.json") as file:
+              data=json.load(file)
+              pass
+     except (FileNotFoundError,json.decoder.JSONDecodeError):
+         messagebox.showerror(title="Error",message="no data file found")
+     else:
+         if website in data:
+             data2 = data[website]["email"]
+             data_pass1 = data[website]["passw"]
+             messagebox.showinfo(title=website, message=f"email : {data2} \n password:{data_pass1}")
+             pyperclip.copy(data_pass1)
+
+
+
+
+
+
+
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -93,5 +134,7 @@ button.grid(column=3,row=5,sticky=EW,pady=10,padx=7)
 #add button
 button1=Button(text="Add",width=10,highlightthickness=0,fg="black",command=save_pass)
 button1.grid(column=2,row=6,padx=20,pady=20,columnspan=2,sticky=EW)
-
+#search button
+button2=Button(text="search",width=10,fg="black",command=find_pass)
+button2.grid(column=3,row=3)
 window.mainloop()
